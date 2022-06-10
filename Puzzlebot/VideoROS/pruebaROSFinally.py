@@ -1,3 +1,4 @@
+from pickle import FRAME
 import numpy as np
 import cv2
 import matplotlib.pyplot as plt
@@ -25,12 +26,35 @@ def extractRedPixels(img):
     filtered2 = cv2.inRange(hsv,lowerb=lowerRed2,upperb=upperRed2)
     masked = cv2.bitwise_and(img,img,mask=filtered+filtered2)
     return masked
-
 def extractGreenPixels(img):
     upperRed = np.array([65,255,255])
     lowerRed = np.array([45,180,88])        
     hsv = cv2.cvtColor(img.copy(),cv2.COLOR_BGR2HSV)
     filtered = cv2.inRange(hsv,lowerb=lowerRed,upperb=upperRed)
+    masked = cv2.bitwise_and(img,img,mask=filtered)
+    return masked
+
+#####################################################################################3
+######SE UTILIZA####################
+def extractRED(img):
+    upperRed = np.array([15,255,255])
+    lowerRed = np.array([0,88,88])
+    upperRed2 = np.array([180,255,255])
+    lowerRed2 = np.array([170,88,88])
+
+    hsv = cv2.cvtColor(img.copy(),cv2.COLOR_BGR2HSV)
+    filtered = cv2.inRange(hsv,lowerRed,upperRed)
+    filtered2 = cv2.inRange(hsv,lowerRed2,upperRed2)
+    maskRed=cv2.add(filtered,filtered2)
+    masked = cv2.bitwise_and(img,img,mask=maskRed)
+    return masked
+
+######SE UTILIZA####################
+def extractGREEN(img):
+    upperRed = np.array([65,255,255])
+    lowerRed = np.array([45,180,88])
+    hsv = cv2.cvtColor(img.copy(),cv2.COLOR_BGR2HSV)
+    filtered = cv2.inRange(hsv,lowerRed,upperRed)
     masked = cv2.bitwise_and(img,img,mask=filtered)
     return masked
 
@@ -58,12 +82,15 @@ def contorno(img):
     #print ('len(contornos2[2])=',len(contornos2[2]))
     return transform
 
-def contourRed(img):
+######SE UTILIZA####################
+def circleRed(img):
     imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB) 
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) 
     gray_blurred = cv2.blur(gray,(3, 3)) 
     detected_circles = cv2.HoughCircles(gray_blurred, cv2.HOUGH_GRADIENT, 1, 20, param1 = 50, param2 = 30, minRadius = 1, maxRadius = 40) 
-    if detected_circles is not None: 
+    found=False
+    if detected_circles is not None:
+        found=True 
         detected_circles = np.uint16(np.around(detected_circles)) 
         for pt in detected_circles[0, :]: 
             a, b, r = pt[0], pt[1], pt[2]
@@ -71,6 +98,22 @@ def contourRed(img):
             #Contorno
             cv2.circle(imgRGB,(a, b), r,(0, 0, 255), 2) 
             #Circle de enmedio
+            cv2.circle(imgRGB,(a, b), 1,(255, 0, 0), 3)
+    return imgRGB
+
+######SE UTILIZA####################
+def circleGreen(img):
+    imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB) 
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) 
+    gray_blurred = cv2.blur(gray,(3, 3)) 
+    detected_circles = cv2.HoughCircles(gray_blurred, cv2.HOUGH_GRADIENT, 1, 20, param1 = 50, param2 = 30, minRadius = 1, maxRadius = 40) 
+    found=False
+    if detected_circles is not None:
+        found=True 
+        detected_circles = np.uint16(np.around(detected_circles)) 
+        for pt in detected_circles[0, :]: 
+            a, b, r = pt[0], pt[1], pt[2] 
+            cv2.circle(imgRGB,(a, b), r,(0, 255, 0), 2) 
             cv2.circle(imgRGB,(a, b), 1,(255, 0, 0), 3)
     return imgRGB
 
@@ -104,10 +147,18 @@ while(cap.isOpened()):
   newImageGreen=contorno(green_pixel_binarized_image)
   found,blopRed=extractBlobs(newImageRed,(0, 0, 255))
   found,blopGreen=extractBlobs(newImageGreen,(0, 255, 0))
-  prueba=contourRed(preprocessed_image)
+  
+  #prueba=contourRed(preprocessed_image)
+  prueba=extractRED(frame)
+  prueba2=circleRed(prueba)
+  prueba3=extractGREEN(frame)
+  prueba4=circleGreen(prueba3)
 
+  filtered_image= prueba2 | prueba4
+  #filtered_image=prueba2
   #cv2.imshow('frame',red_pixel_image)
-  cv2.imshow('frame', prueba)
+
+  cv2.imshow('frame', filtered_image)
   if cv2.waitKey(1) & 0xFF == ord('q'):
     break
 
