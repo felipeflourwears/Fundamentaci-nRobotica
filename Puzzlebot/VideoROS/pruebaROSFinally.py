@@ -89,8 +89,12 @@ def circleRed(img):
     gray_blurred = cv2.blur(gray,(3, 3)) 
     detected_circles = cv2.HoughCircles(gray_blurred, cv2.HOUGH_GRADIENT, 1, 20, param1 = 50, param2 = 30, minRadius = 1, maxRadius = 40) 
     found=False
+    #if found==False:
+    #    print("Red: ",found)
     if detected_circles is not None:
-        found=True 
+        found=True
+    #   if found==True:
+    #        print("Red: ", found) 
         detected_circles = np.uint16(np.around(detected_circles)) 
         for pt in detected_circles[0, :]: 
             a, b, r = pt[0], pt[1], pt[2]
@@ -99,7 +103,7 @@ def circleRed(img):
             cv2.circle(imgRGB,(a, b), r,(0, 0, 255), 2) 
             #Circle de enmedio
             cv2.circle(imgRGB,(a, b), 1,(255, 0, 0), 3)
-    return imgRGB
+    return imgRGB, found
 
 ######SE UTILIZA####################
 def circleGreen(img):
@@ -108,14 +112,18 @@ def circleGreen(img):
     gray_blurred = cv2.blur(gray,(3, 3)) 
     detected_circles = cv2.HoughCircles(gray_blurred, cv2.HOUGH_GRADIENT, 1, 20, param1 = 50, param2 = 30, minRadius = 1, maxRadius = 40) 
     found=False
+    #if found==False:
+    #    print("Green: ",found)
     if detected_circles is not None:
-        found=True 
+        found=True
+    #    if found==True:
+    #        print("Green: ",found)
         detected_circles = np.uint16(np.around(detected_circles)) 
         for pt in detected_circles[0, :]: 
             a, b, r = pt[0], pt[1], pt[2] 
             cv2.circle(imgRGB,(a, b), r,(0, 255, 0), 2) 
             cv2.circle(imgRGB,(a, b), 1,(255, 0, 0), 3)
-    return imgRGB
+    return imgRGB, found
 
 def extractBlobs(img, color):
     found = False
@@ -149,12 +157,12 @@ while(cap.isOpened()):
   found,blopGreen=extractBlobs(newImageGreen,(0, 255, 0))
   
   #prueba=contourRed(preprocessed_image)
-  prueba=extractRED(frame)
-  prueba2=circleRed(prueba)
-  prueba3=extractGREEN(frame)
-  prueba4=circleGreen(prueba3)
+  redFrame=extractRED(frame)
+  contourRED, foundFlagRED=circleRed(redFrame)
+  greenFrame=extractGREEN(frame)
+  contourGREEN, foundFlagGREEN=circleGreen(greenFrame)
 
-  filtered_image= prueba2 | prueba4
+  filtered_image= contourRED | contourGREEN
   #filtered_image=prueba2
   #cv2.imshow('frame',red_pixel_image)
 
