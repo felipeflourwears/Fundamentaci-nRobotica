@@ -4,8 +4,8 @@ import skfuzzy as sk
 from matplotlib import pyplot as plt
 
 
-x = 50
-y = 50
+x = 60
+y = 60
 
 # velocidad peaton 
 x_qual = np.arange(2.01, 10.01, 0.01)
@@ -85,7 +85,7 @@ print("mu2: ", muuu2)
 print("zzz: ", zzzzz)
 
 plt.figure()
-"""
+
 plt.subplot(2,2,1)
 #velocidad auto
 plt.title("velocidad auto")
@@ -93,7 +93,6 @@ plt.plot(velAuto,vb)
 plt.plot(velAuto,vm)
 plt.plot(velAuto,va)
 plt.legend(["Baja","Media","Alta"])
-"""
 
 plt.subplot(2,2,2)
 # distancia auto
@@ -102,6 +101,8 @@ plt.plot(dist,dc)
 plt.plot(dist,dm)
 plt.plot(dist,dl)
 plt.legend(["Baja","Media","Alta"])
+
+
 
 plt.subplot(2,2,3)
 # valocidad peaton
@@ -113,6 +114,7 @@ plt.plot(x_qual,highSpeed)
 plt.plot(x_qual,mcqueenLightningSpeed)
 plt.legend(["Tortuga","Baja","Media","Alta","RayoMcQueen"])
 
+
 plt.subplot(2,2,4)
 plt.title("velocidad final")
 plt.plot(x_qual,arr)
@@ -123,5 +125,4 @@ ax.set_ylim([0,1])
 #plt.plot(x_qual,ma)
 #plt.plot(x_qual,a)
 #plt.legend(["Tortuga","Baja","Media","Alta","RayoMcQueen"])
-
 plt.show()
